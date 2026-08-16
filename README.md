@@ -1,6 +1,13 @@
 # ZSH-Linux
 Dieses Repository enthält meine `.zshrc` für Linux.
 
+## Inhalt
+| Datei | Zweck |
+|---|---|
+| `.zshrc` | Haupt-Shell-Konfiguration (Antidote, zsh-autocomplete-Stack, Aliase, Tools) |
+| `.zsh_plugins.txt` | Antidote Plugin-Manifest (Ladereihenfolge wichtig) |
+| `ZSH-AUTOCOMPLETE.md` | Doku zu zsh-autocomplete, compinit-Regel und Tastenkonflikten |
+
 ## Installation auf einem zweiten Rechner
 1. Repository klonen:
    `git clone https://github.com/Macaldente/ZSH-Linux.git`
@@ -9,6 +16,6 @@ Dieses Repository enthält meine `.zshrc` für Linux.
 3. Bestehende ZSH-Konfiguration sichern:
    `cp ~/.zshrc ~/.zshrc.backup`
 4. Konfiguration installieren:
-   `cp .zshrc ~/.zshrc`
+   `cp .zshrc .zsh_plugins.txt ~/`
 5. ZSH neu laden:
    `source ~/.zshrc`

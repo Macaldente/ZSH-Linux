@@ -15,9 +15,16 @@ export ANTIDOTE_HOME="${HOME}/.zsh/plugins"
 # Antidote laden
 source "$ANTIDOTE_DIR/antidote.zsh"
 
-# Plugins laden (create ~/.zsh_plugins.txt if needed)
-if [[ -f "${ZDOTDIR:-$HOME}/.zsh_plugins.txt" ]]; then
-    antidote load
+# Plugin-Manifest anlegen, falls es noch nicht existiert (Reihenfolge ist wichtig)
+ZSH_PLUGINS_FILE="${ZDOTDIR:-$HOME}/.zsh_plugins.txt"
+if [[ ! -f "$ZSH_PLUGINS_FILE" ]]; then
+  cat > "$ZSH_PLUGINS_FILE" <<'EOF'
+marlonrichert/zsh-autocomplete
+mafredri/zsh-async
+zsh-users/zsh-autosuggestions
+Aloxaf/fzf-tab
+zsh-users/zsh-syntax-highlighting
+EOF
 fi
 
 # Atuin Setup (existing configuration)
@@ -29,9 +36,16 @@ HISTSIZE=10000
 SAVEHIST=10000
 setopt INC_APPEND_HISTORY SHARE_HISTORY
 
-# Completion
-autoload -Uz compinit && compinit
-compinit -d ~/.zcompdump
+# --- Completion cache
+# NOTE: zsh-autocomplete runs compinit itself and stubs it out afterwards.
+# Upstream requires that we do NOT call compinit here. It honours $ZSH_COMPDUMP.
+export ZSH_COMPDUMP="${ZDOTDIR:-$HOME}/.cache/zsh/zcompdump"
+mkdir -p "${ZDOTDIR:-$HOME}/.cache/zsh"
+
+# --- Plugin loader
+ZSH_AUTOSUGGEST_STRATEGY=( history )
+ZSH_HIGHLIGHT_HIGHLIGHTERS=( main brackets )
+antidote load "$ZSH_PLUGINS_FILE"
 
 # --- Alias Sektion ---
 # ls
@@ -60,7 +74,6 @@ clrclp () {
 export PATH="/usr/local/bin:$HOME/.atuin/bin:$PATH"
 
 # Tools initialisieren
-eval "$(atuin init zsh)"
 eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
 
@@ -73,6 +86,19 @@ if command -v fzf &> /dev/null; then
     if [[ -f /usr/share/doc/fzf/examples/completion.zsh ]]; then
         source /usr/share/doc/fzf/examples/completion.zsh
     fi
+    # fzf-tab wants Tab; guard so this degrades safely if fzf-tab is removed.
+    if (( $+widgets[fzf-tab-complete] )); then
+        bindkey -M emacs '^I' fzf-tab-complete
+        bindkey -M viins '^I' fzf-tab-complete
+    fi
 fi
+
+# --- Nearly finished
+# Atuin: opt out of its default keymap so it cannot take the Up arrow away from
+# zsh-autocomplete's history menu. Atuin keeps Ctrl+R only.
+export ATUIN_NOBIND=true
+eval "$(atuin init zsh)"
+bindkey -M emacs '^R' atuin-search
+bindkey -M viins '^R' atuin-search
 
 # --- Ende der .zshrc Konfiguration ---
