@@ -27,8 +27,9 @@ zsh-users/zsh-syntax-highlighting
 EOF
 fi
 
-# Atuin Setup (existing configuration)
-. "$HOME/.atuin/bin/env"
+# Atuin Setup (existing configuration, only present if installed via the
+# official install script rather than a system package manager)
+[ -f "$HOME/.atuin/bin/env" ] && . "$HOME/.atuin/bin/env"
 
 # History
 HISTFILE=~/.zsh_history
