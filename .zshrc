@@ -80,14 +80,19 @@ eval "$(starship init zsh)"
 
 # FZF initialisieren
 if command -v fzf &> /dev/null; then
-    # Try different FZF initialization methods
-    if [[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]]; then
-        source /usr/share/doc/fzf/examples/key-bindings.zsh
-    fi
-    if [[ -f /usr/share/doc/fzf/examples/completion.zsh ]]; then
-        source /usr/share/doc/fzf/examples/completion.zsh
-    fi
-    # fzf-tab wants Tab; guard so this degrades safely if fzf-tab is removed.
+    # fzf --zsh is the modern, distro-agnostic integration (works regardless
+    # of where a package puts key-bindings.zsh/completion.zsh, e.g. Fedora's
+    # /usr/share/fzf/shell/ layout differs from the Debian/macOS doc paths).
+    eval "$(fzf --zsh)" 2>/dev/null || {
+        # Fallback for older fzf without --zsh support
+        for f in /usr/share/doc/fzf/examples/key-bindings.zsh /usr/share/fzf/shell/key-bindings.zsh; do
+            [[ -f "$f" ]] && source "$f" && break
+        done
+        for f in /usr/share/doc/fzf/examples/completion.zsh /usr/share/fzf/shell/completion.zsh; do
+            [[ -f "$f" ]] && source "$f" && break
+        done
+    }
+    # fzf's shell integration steals Tab for `fzf-completion`; hand it back to fzf-tab.
     if (( $+widgets[fzf-tab-complete] )); then
         bindkey -M emacs '^I' fzf-tab-complete
         bindkey -M viins '^I' fzf-tab-complete
