@@ -7,6 +7,7 @@ Dieses Repository enthält meine `.zshrc` für Linux.
 | `.zshrc` | Haupt-Shell-Konfiguration (Antidote, zsh-autocomplete-Stack, Aliase, Tools) |
 | `.zsh_plugins.txt` | Antidote Plugin-Manifest (Ladereihenfolge wichtig) |
 | `ZSH-AUTOCOMPLETE.md` | Doku zu zsh-autocomplete, compinit-Regel und Tastenkonflikten |
+| `sudo-via-fido-pam.md` | Doku zu sudo-Bestätigung per FIDO2/U2F-Stick (`pam_u2f`), inkl. Fedora-Unterschiede |
 
 ## Installation auf einem zweiten Rechner
 1. Repository klonen:
