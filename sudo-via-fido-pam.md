@@ -41,6 +41,25 @@ pamu2fcfg -o pam://$(hostname) -i pam://$(hostname) > ~/.config/Yubico/u2f_keys
 Ablauf: PIN eingeben → Enter → Stick berühren (Metallfläche/Logo halten, **nicht**
 den Kunststoffrand; ca. 1–2 Sekunden halten oder mehrfach antippen).
 
+### 3.1 Benutzerdefiniertes Verzeichnis statt `~/.config/Yubico`
+
+`pam_u2f` sucht die Mapping-Datei standardmäßig unter
+`$XDG_CONFIG_HOME/Yubico/u2f_keys` bzw. `$HOME/.config/Yubico/u2f_keys`. Ein
+anderer Ordnername (z. B. `~/.config/Thetis`, benannt nach dem verwendeten
+Stick-Modell) funktioniert genauso, muss dann aber **explizit** über die
+`authfile=`-Option in der PAM-Zeile referenziert werden — sonst findet
+`pam_u2f` die Datei nicht und fällt (bei `sufficient`) stillschweigend auf das
+Passwort zurück.
+
+```sh
+mkdir -p ~/.config/Thetis
+pamu2fcfg -o pam://$(hostname) -i pam://$(hostname) > ~/.config/Thetis/u2f_keys
+```
+
+**Wichtig:** PAM-Konfigurationsdateien expandieren `~` nicht wie eine Shell.
+In der `authfile=`-Option muss daher der **absolute Pfad** verwendet werden
+(z. B. `/home/<user>/.config/Thetis/u2f_keys`), nicht `~/...`.
+
 **Fedora-Hinweis (udev/Berechtigungen):** Fedora nutzt kein `plugdev`-Gruppenmodell
 wie Debian/Ubuntu. Der USB-Sicherheitsschlüssel wird stattdessen über systemd/udev
 per `uaccess`-Tag automatisch für den aktuell angemeldeten Seat-Benutzer freigegeben.
@@ -91,6 +110,24 @@ password   include      system-auth
 session    optional     pam_keyinit.so revoke
 session    include      system-auth
 ```
+
+Bei Verwendung eines benutzerdefinierten Verzeichnisses (siehe 3.1) die
+`authfile=`-Option mit absolutem Pfad ergänzen — so tatsächlich auf diesem
+Rechner deployt (Stick-Mapping unter `~/.config/Thetis/u2f_keys`):
+
+```
+auth       sufficient   pam_u2f.so cue authfile=/home/<user>/.config/Thetis/u2f_keys
+auth       include      system-auth
+account    include      system-auth
+password   include      system-auth
+session    optional     pam_keyinit.so revoke
+session    required     pam_limits.so
+session    include      system-auth
+```
+
+`<user>` durch den tatsächlichen Benutzernamen ersetzen (`$HOME` wird von PAM
+nicht expandiert, siehe 3.1). Vor der Änderung empfiehlt sich ein Backup:
+`sudo cp /etc/pam.d/sudo /etc/pam.d/sudo.bak-$(date +%Y%m%d%H%M%S)`.
 
 **Wichtiger Fedora-Unterschied — `authselect`:** Fedora verwaltet
 `/etc/pam.d/system-auth`, `password-auth`, `smartcard-auth`, `fingerprint-auth`
