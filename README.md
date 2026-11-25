@@ -18,5 +18,7 @@ Dieses Repository enthält meine `.zshrc` für Linux.
    `cp ~/.zshrc ~/.zshrc.backup`
 4. Konfiguration installieren:
    `cp .zshrc .zsh_plugins.txt ~/`
-5. ZSH neu laden:
+5. `git look` installieren (zeigt, ob es in den Repos unter `~/Git` Updates vom Remote gibt):
+   `mkdir -p ~/.local/bin && ln -s "$PWD/.local/bin/git-look" ~/.local/bin/git-look`
+6. ZSH neu laden:
    `source ~/.zshrc`

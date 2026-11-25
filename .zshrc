@@ -72,7 +72,7 @@ clrclp () {
 }
 
 # Pfade für Pop!_OS
-export PATH="/usr/local/bin:$HOME/.atuin/bin:$PATH"
+export PATH="$HOME/.local/bin:/usr/local/bin:$HOME/.atuin/bin:$PATH"
 
 # Tools initialisieren
 eval "$(zoxide init zsh)"
