@@ -37,6 +37,9 @@ HISTSIZE=10000
 SAVEHIST=10000
 setopt INC_APPEND_HISTORY SHARE_HISTORY
 
+# "#" leitet auch bei direkt eingetippten Befehlen einen Kommentar ein
+setopt INTERACTIVE_COMMENTS
+
 # --- Completion cache
 # NOTE: zsh-autocomplete runs compinit itself and stubs it out afterwards.
 # Upstream requires that we do NOT call compinit here. It honours $ZSH_COMPDUMP.
