@@ -3,6 +3,9 @@
 # --- Begin of .zshrc config ---
 # ------------------------------
 
+# --- OS-Wächter: diese .zshrc ist nur für Linux (macOS-Version: Repo ZSH-Mac)
+[[ $OSTYPE == linux* ]] || { print -P "%F{red}ZSH-Linux/.zshrc ist nur für Linux – Laden abgebrochen (\$OSTYPE=$OSTYPE).%f"; return 1 }
+
 # Antidote Plugin Manager (already installed)
 ANTIDOTE_DIR="${HOME}/.antidote"
 if [[ ! -d "$ANTIDOTE_DIR" ]]; then
